@@ -1,11 +1,13 @@
 import './App.css';
+import ProjectList from './components/ProjectList';
+
 
 function App() {
   return (
     <div className="app-container">
       <aside className="sidebar">
         <h2>Projects</h2>
-        {/* 這裡之後放 ProjectList */}
+        <ProjectList />
       </aside>
       <main className="main-content">
         <h2>Inbox</h2>

@@ -1,17 +1,19 @@
 import './App.css';
 import ProjectList from './components/ProjectList';
-
+import { useState } from 'react';
 
 function App() {
+  const [selectedProject, setSelectedProject] = useState('Inbox');
+
   return (
     <div className="app-container">
       <aside className="sidebar">
         <h2>Projects</h2>
-        <ProjectList />
+        <ProjectList onProjectSelect={setSelectedProject} />
       </aside>
       <main className="main-content">
-        <h2>Inbox</h2>
-        {/* 這裡之後放 TaskList 和新增任務按鈕 */}
+        <h2>{selectedProject}</h2>
+        {/* 未來放 TaskList */}
       </main>
     </div>
   );

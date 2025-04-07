@@ -1,11 +1,23 @@
-function TaskList({ tasks }) {
+function TaskList({ tasks, onDeleteTask }) {
+    if (tasks.length === 0) {
+      return <p>尚無任務</p>;
+    }
+  
     return (
       <ul>
-        {tasks.length === 0 ? (
-          <li>尚無任務</li>
-        ) : (
-          tasks.map((task, index) => <li key={index}>{task.title}</li>)
-        )}
+        {tasks.map((task, index) => (
+          <li key={index} className={task.completed ? 'done' : ''}>
+            <div className="task-text">
+              <div className="task-title">{task.title}</div>
+              <div className="task-description">{task.description}</div>
+              <div className="task-dueDate">{task.dueDate}</div>
+              <div className={`task-priority ${task.priority.toLowerCase()}`}>
+                {task.priority}
+              </div>
+            </div>
+            <button onClick={() => onDeleteTask(index)}>刪除</button>
+          </li>
+        ))}
       </ul>
     );
   }

@@ -1,4 +1,3 @@
-// src/components/NewTaskDialog.jsx
 import { useState, useRef } from 'react';
 
 function NewTaskDialog({ open, onClose, onAddTask }) {
@@ -16,17 +15,18 @@ function NewTaskDialog({ open, onClose, onAddTask }) {
       return;
     }
 
-    onAddTask({ title, description, dueDate, priority, completed: false });
+    const newTask = {title, description, dueDate, priority , completed: false};
+    onAddTask(newTask);
     setTitle('');
     setDescription('');
     setDueDate('');
     setPriority('Low');
     onClose();
-  };
+  };    
 
   return (
     <dialog ref={dialogRef} open={open} className="task-dialog">
-      <form onSubmit={handleSubmit} method="dialog" className="task-form">
+      <form onSubmit={handleSubmit} className="task-form">
         <h2>新增任務</h2>
         <label>
           Title：

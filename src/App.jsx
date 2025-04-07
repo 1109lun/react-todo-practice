@@ -11,16 +11,14 @@ function App() {
 
   const handleAddTask = (task) => {
     const updatedProjects = projects.map((project) =>
-      project.name === currentProject.name
+      project === currentProject
         ? { ...project, tasks: [...project.tasks, task] }
         : project
     );
     setProjects(updatedProjects);
-    setCurrentProject(
-      updatedProjects.find((p) => p.name === currentProject.name)
-    );
+    setCurrentProject(updatedProjects.find((p) => p.name === currentProject.name)); // 加這行
   };
-
+  
   return (
     <div className="app-container">
       <aside className="sidebar">

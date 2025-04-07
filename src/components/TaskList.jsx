@@ -1,4 +1,4 @@
-function TaskList({ tasks, onDeleteTask }) {
+function TaskList({ tasks, onToggleTask, onDeleteTask }) {
     if (tasks.length === 0) {
       return <p>尚無任務</p>;
     }
@@ -7,6 +7,12 @@ function TaskList({ tasks, onDeleteTask }) {
       <ul>
         {tasks.map((task, index) => (
           <li key={index} className={task.completed ? 'done' : ''}>
+            <input
+              type="checkbox"
+              checked={task.completed}
+              onChange={() => onToggleTask(index)}
+              className="task-checkbox"
+            />
             <div className="task-text">
               <div className="task-title">{task.title}</div>
               <div className="task-description">{task.description}</div>

@@ -1,6 +1,7 @@
 import './App.css';
 import { useState } from 'react';
 import ProjectList from './components/ProjectList';
+import TaskList from './components/TaskList';
 
 function App() {
   const [projects, setProjects] = useState([{ name: 'Inbox', tasks: [] }]);
@@ -19,7 +20,7 @@ function App() {
       </aside>
       <main className="main-content">
         <h2>{currentProject ? currentProject.name : '尚未選擇專案'}</h2>
-        {/* 未來放 TaskList */}
+        {currentProject && (<TaskList tasks={currentProject.tasks} />)}
       </main>
     </div>
   );

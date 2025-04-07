@@ -1,42 +1,171 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+header {
+  background-color: aquamarine;
+  padding: 10px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 2px solid black;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.app-container {
+  height: 100vh;
+  display: flex;
+  margin: 0;
+  font-family: sans-serif;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.sidebar {
+  background-color: #e6ecb4;
+  width: 250px;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-right: 2px solid black;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.main-content {
+  flex: 1;
+  padding: 20px;
 }
 
-.card {
-  padding: 2em;
+h1,
+h2 {
+  margin-top: 0;
 }
 
-.read-the-docs {
-  color: #888;
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+#ProjectList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.project {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: white;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.project:hover {
+  transform: scale(1.05);
+}
+
+.project.active {
+  background-color: #8dc1ef;
+  font-weight: bold;
+  border: 2px solid black;
+}
+
+.task-text {
+  margin-left: 10px;
+  flex: 1;
+}
+
+.task-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.task-description {
+  font-size: 0.9em;
+  color: #6d6c6c;
+  margin-top: 4px;
+}
+
+.task-dueDate {
+  font-size: 0.9em;
+  color: #6d6c6c;
+  margin-top: 4px;
+}
+
+.task-priority {
+  font-size: 0.9em;
+  font-weight: bold;
+  margin-top: 4px;
+}
+
+.task-priority.high {
+  color: red;
+}
+
+.task-priority.medium {
+  color: orange;
+}
+
+.task-priority.low {
+  color: green;
+}
+
+.done .task-title {
+  text-decoration: line-through;
+  color: gray;
+  opacity: 0.5;
+}
+
+.done {
+  background-color: #f0f8ff;
+  border-left: 5px solid #00bfff;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 5px;
+}
+
+button {
+  background-color: bisque;
+  color: black;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+  margin: 5px;
+  padding: 8px 12px;
+  border: none;
+  transition: background-color 0.3s ease-in-out;
+}
+
+button:hover {
+  background-color: #f0e68c;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+li {
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: white;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.task-checkbox {
+  width: 10px;
+  height: 10px;
+  cursor: pointer;
+  accent-color: bisque;
+  transition: transform 0.3s ease-in-out;
+}
+
+.task-checkbox:active {
+  transform: scale(0.95);
 }

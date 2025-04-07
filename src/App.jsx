@@ -19,6 +19,36 @@ function App() {
     setCurrentProject(updatedProjects.find((p) => p.name === currentProject.name)); // 加這行
   };
   
+  const handleToggleTask = (index) => {
+    const updatedProjects = projects.map((project) =>
+      project.name === currentProject.name
+        ? {
+            ...project,
+            tasks: project.tasks.map((task, i) =>
+              i === index ? { ...task, completed: !task.completed } : task
+            ),
+          }
+        : project
+    );
+    setProjects(updatedProjects);
+    const updatedCurrent = updatedProjects.find(p => p.name === currentProject.name);
+    setCurrentProject(updatedCurrent);
+  };
+  
+  const handleDeleteTask = (index) => {
+    const updatedProjects = projects.map((project) =>
+      project.name === currentProject.name
+        ? {
+            ...project,
+            tasks: project.tasks.filter((_, i) => i !== index),
+          }
+        : project
+    );
+    setProjects(updatedProjects);
+    const updatedCurrent = updatedProjects.find(p => p.name === currentProject.name);
+    setCurrentProject(updatedCurrent);
+  };
+  
   return (
     <div className="app-container">
       <aside className="sidebar">
@@ -34,7 +64,11 @@ function App() {
       <main className="main-content">
         <h2>{currentProject ? currentProject.name : '尚未選擇專案'}</h2>
         <button onClick={() => setDialogOpen(true)}>新增任務</button>
-        <TaskList tasks={currentProject?.tasks || []} />
+        <TaskList
+          tasks={currentProject?.tasks || []}
+          onToggleTask={handleToggleTask}
+          onDeleteTask={handleDeleteTask}
+        />
       </main>
 
       <NewTaskDialog

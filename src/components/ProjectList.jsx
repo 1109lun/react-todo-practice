@@ -1,16 +1,32 @@
 import { useState } from 'react';
 
-function ProjectList({ onProjectSelect }) {
-  const [projects, setProjects] = useState(['Inbox']);
-
+function ProjectList({ projects, currentProject, setProjects, setCurrentProject }) {
   const addProject = () => {
     const name = prompt('請輸入專案名稱');
     if (!name || name.trim() === '') return;
-    if (projects.includes(name)) {
+
+    if (projects.some(p => p.name === name)) {
       alert('專案已存在');
       return;
     }
-    setProjects([...projects, name]);
+
+    const newProject = { name, tasks: [] };
+    setProjects([...projects, newProject]);
+    setCurrentProject(newProject);
+  };
+
+  const deleteProject = () => {
+    if (!currentProject) return;
+
+    const updated = projects.filter(p => p !== currentProject);
+    setProjects(updated);
+
+    // 若刪除的是目前專案，就切換到下一個或 null
+    if (updated.length > 0) {
+      setCurrentProject(updated[0]);
+    } else {
+      setCurrentProject(null);
+    }
   };
 
   return (
@@ -19,14 +35,15 @@ function ProjectList({ onProjectSelect }) {
         {projects.map((project, index) => (
           <li
             key={index}
-            className="project"
-            onClick={() => onProjectSelect(project)}
+            className={`project ${project === currentProject ? 'active' : ''}`}
+            onClick={() => setCurrentProject(project)}
           >
-            {project}
+            {project.name}
           </li>
         ))}
       </ul>
       <button onClick={addProject}>新增專案</button>
+      <button onClick={deleteProject}>刪除專案</button>
     </div>
   );
 }

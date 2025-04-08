@@ -1,11 +1,20 @@
 import './App.css';
 import { useState } from 'react';
+import { useEffect } from 'react';
 import ProjectList from './components/ProjectList';
 import TaskList from './components/TaskList';
 import NewTaskDialog from './components/NewTaskDialog';
 
 function App() {
-  const [projects, setProjects] = useState([{ name: 'Inbox', tasks: [] }]);
+  const [projects, setProjects] = useState(() => {
+    const savedProjects = localStorage.getItem('projects');
+    return savedProjects ? JSON.parse(savedProjects) : [{ name: 'Inbox', tasks: [] }];
+  });
+
+  useEffect(() => {
+    localStorage.setItem('projects', JSON.stringify(projects));
+  }, [projects]);
+
   const [currentProject, setCurrentProject] = useState(projects[0]);
   const [dialogOpen, setDialogOpen] = useState(false);
 

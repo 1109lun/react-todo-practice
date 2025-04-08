@@ -57,7 +57,33 @@ function App() {
     const updatedCurrent = updatedProjects.find(p => p.name === currentProject.name);
     setCurrentProject(updatedCurrent);
   };
-  
+
+  const handleAddBoredTask = async() => {
+    try {
+      const response = await fetch('https://www.boredapi.com/api/activity');
+      const data = await response.json();
+
+      const newTask = {
+        title : data.activity,
+        description : '',
+        dueDate : '',
+        priority : 'Low',
+        completed: false,
+      };
+
+      const updatedProjects = projects.map((project) =>
+        project === currentProject
+          ? { ...project, tasks: [...project.tasks, newTask] }
+          : project
+      );
+      setProjects(updatedProjects);
+      localStorage.setItem('projects', JSON.stringify(updatedProjects));
+    } catch (error) {
+      alert('無法獲取任務，請稍後再試');
+      console.error(error);
+    }
+  };
+
   return (
     <div className="app-container">
       <aside className="sidebar">
@@ -73,6 +99,7 @@ function App() {
       <main className="main-content">
         <h2>{currentProject ? currentProject.name : '尚未選擇專案'}</h2>
         <button onClick={() => setDialogOpen(true)}>新增任務</button>
+        <button onClick={handleAddBoredTask}>我好無聊</button>
         <TaskList
           tasks={currentProject?.tasks || []}
           onToggleTask={handleToggleTask}

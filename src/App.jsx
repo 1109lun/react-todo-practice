@@ -60,7 +60,7 @@ function App() {
 
   const handleAddBoredTask = async() => {
     try {
-      const response = await fetch('https://www.boredapi.com/api/activity');
+      const response = await fetch('https://bored.api.lewagon.com/api/activity');
       const data = await response.json();
 
       const newTask = {
@@ -77,6 +77,7 @@ function App() {
           : project
       );
       setProjects(updatedProjects);
+      setCurrentProject(updatedProjects.find(p => p.name === currentProject.name));
       localStorage.setItem('projects', JSON.stringify(updatedProjects));
     } catch (error) {
       alert('無法獲取任務，請稍後再試');

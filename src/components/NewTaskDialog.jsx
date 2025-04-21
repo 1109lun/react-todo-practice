@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 
-function NewTaskDialog({ open, onClose, onAddTask }) {
+function NewTaskDialog({ open, onClose, projectId, fetchTasks }) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -8,21 +8,44 @@ function NewTaskDialog({ open, onClose, onAddTask }) {
 
   const dialogRef = useRef();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) {
       alert('請輸入任務標題');
       return;
     }
 
-    const newTask = {title, description, dueDate, priority , completed: false};
-    onAddTask(newTask);
-    setTitle('');
-    setDescription('');
-    setDueDate('');
-    setPriority('Low');
-    onClose();
-  };    
+    const newTask = {
+      title,
+      description,
+      due_date: dueDate,
+      priority :priority.toLowerCase(),
+      completed: false,
+      project_id: projectId,
+    };
+
+    try {
+      const res = await fetch('http://localhost:8000/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newTask),
+      });
+
+      if (!res.ok) {
+        throw new Error('新增任務失敗');
+      }
+
+      setTitle('');
+      setDescription('');
+      setDueDate('');
+      setPriority('Low');
+      onClose();
+      fetchTasks(); 
+    } catch (err) {
+      alert('新增任務時發生錯誤');
+      console.error(err);
+    }
+  };
 
   return (
     <dialog ref={dialogRef} open={open} className="task-dialog">
@@ -50,9 +73,7 @@ function NewTaskDialog({ open, onClose, onAddTask }) {
         </label>
         <menu>
           <button type="submit">新增</button>
-          <button type="button" onClick={onClose}>
-            取消
-          </button>
+          <button type="button" onClick={onClose}>取消</button>
         </menu>
       </form>
     </dialog>

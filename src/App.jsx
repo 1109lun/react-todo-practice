@@ -6,82 +6,76 @@ import TaskList from './components/TaskList';
 import NewTaskDialog from './components/NewTaskDialog';
 
 function App() {
-  const [projects, setProjects] = useState(() => {
-    const savedProjects = localStorage.getItem('projects');
-    return savedProjects ? JSON.parse(savedProjects) : [{ name: 'Inbox', tasks: [] }];
-  });
-
-  useEffect(() => {
-    localStorage.setItem('projects', JSON.stringify(projects));
-  }, [projects]);
-
-  const [currentProject, setCurrentProject] = useState(projects[0]);
+  const [projects, setProjects] = useState([]);
+  const [currentProject, setCurrentProject] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const handleAddTask = (task) => {
-    const updatedProjects = projects.map((project) =>
-      project === currentProject
-        ? { ...project, tasks: [...project.tasks, task] }
-        : project
-    );
-    setProjects(updatedProjects);
-    setCurrentProject(updatedProjects.find((p) => p.name === currentProject.name)); // 加這行
-  };
-  
-  const handleToggleTask = (index) => {
-    const updatedProjects = projects.map((project) =>
-      project.name === currentProject.name
-        ? {
-            ...project,
-            tasks: project.tasks.map((task, i) =>
-              i === index ? { ...task, completed: !task.completed } : task
-            ),
-          }
-        : project
-    );
-    setProjects(updatedProjects);
-    const updatedCurrent = updatedProjects.find(p => p.name === currentProject.name);
-    setCurrentProject(updatedCurrent);
-  };
-  
-  const handleDeleteTask = (index) => {
-    const updatedProjects = projects.map((project) =>
-      project.name === currentProject.name
-        ? {
-            ...project,
-            tasks: project.tasks.filter((_, i) => i !== index),
-          }
-        : project
-    );
-    setProjects(updatedProjects);
-    const updatedCurrent = updatedProjects.find(p => p.name === currentProject.name);
-    setCurrentProject(updatedCurrent);
-  };
+  useEffect(() => {
+    fetch('http://localhost:8000/projects')
+      .then(res => res.json())
+      .then(async (data) => {
+        if (data.length === 0) {
+          // 自動建立一個 Inbox 專案
+          const res = await fetch('http://localhost:8000/projects', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: 'Inbox' }),
+          });
+          const inbox = await res.json();
+          setProjects([inbox]);
+          setCurrentProject(inbox);
+        } else {
+          const firstProject = data[0];
+          const tasksRes = await fetch(`http://localhost:8000/projects/${firstProject.id}/tasks`);
+          const tasks = await tasksRes.json();
+          setCurrentProject({ ...firstProject, tasks });
+        }
+      })
+      .catch(err => console.error('無法取得專案資料', err));
+  }, []);
 
-  const handleAddBoredTask = async() => {
+  const refreshProjects = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/projects');
+      const data = await res.json();
+      setProjects(data);
+  
+      if (currentProject) {
+        const match = data.find(p => p.id === currentProject.id);
+        if (match) {
+          const taskRes = await fetch(`http://localhost:8000/projects/${match.id}/tasks`);
+          const tasks = await taskRes.json();
+          setCurrentProject({ ...match, tasks });
+        }
+      }
+    } catch (err) {
+      console.error('刷新專案時發生錯誤', err);
+    }
+  };
+  
+  const handleAddBoredTask = async () => {
     try {
       const response = await fetch('https://bored.api.lewagon.com/api/activity');
       const data = await response.json();
 
-      const newTask = {
-        title : data.activity,
-        description : '',
-        dueDate : '',
-        priority : 'Low',
+      const taskWithProjectId = {
+        title: data.activity,
+        description: '',
+        dueDate: '',
+        priority: 'low',
         completed: false,
+        project_id: currentProject.id,
       };
 
-      const updatedProjects = projects.map((project) =>
-        project === currentProject
-          ? { ...project, tasks: [...project.tasks, newTask] }
-          : project
-      );
-      setProjects(updatedProjects);
-      setCurrentProject(updatedProjects.find(p => p.name === currentProject.name));
-      localStorage.setItem('projects', JSON.stringify(updatedProjects));
-    } catch (error) {
-      alert('無法獲取任務，請稍後再試');
-      console.error(error);
+      await fetch('http://localhost:8000/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(taskWithProjectId),
+      });
+  
+      refreshProjects();
+    } catch (err) {
+      console.error('取得無聊任務失敗', err);
     }
   };
 
@@ -103,15 +97,15 @@ function App() {
         <button onClick={handleAddBoredTask}>我好無聊</button>
         <TaskList
           tasks={currentProject?.tasks || []}
-          onToggleTask={handleToggleTask}
-          onDeleteTask={handleDeleteTask}
+          fetchTasks={refreshProjects} 
         />
       </main>
 
       <NewTaskDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        onAddTask={handleAddTask}
+        projectId={currentProject?.id}
+        fetchTasks={refreshProjects}
       />
     </div>
   );

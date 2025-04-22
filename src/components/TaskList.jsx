@@ -16,7 +16,7 @@ function TaskList({ tasks, fetchTasks }) {
         throw new Error(`更新任務失敗：${JSON.stringify(errData)}`);
       }
   
-      fetchTasks(); // 重新載入任務
+      fetchTasks(); 
     } catch (err) {
       alert('更新任務失敗');
       console.error(err);
@@ -28,7 +28,7 @@ function TaskList({ tasks, fetchTasks }) {
       await fetch(`http://localhost:8000/tasks/${taskId}`, {
         method: 'DELETE',
       });
-      fetchTasks(); // 重新載入任務
+      fetchTasks(); 
     } catch (err) {
       alert('刪除任務失敗');
       console.error(err);
